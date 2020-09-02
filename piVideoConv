@@ -1,0 +1,24 @@
+#!/bin/bash
+
+if [ "$1" == "" ]
+then
+	echo "Usage: $0 PATH"
+	exit
+fi
+
+tempFile=`mktemp -u XXXXXXXX.mp4`
+
+for fileName in `ls $1/*.mp4`
+do
+	result=`ffprobe $fileName 2>&1 | grep yuv420p`
+
+	if [ $? == 0 ]
+	then
+		echo $fileName Encoded correctly
+	else
+		echo $fileName
+		echo ffmpeg -i $fileName -vf format=yuv420p $tempFile
+		ffmpeg -i $fileName -vf format=yuv420p $tempFile
+		mv -f $tempFile $fileName
+	fi
+done
