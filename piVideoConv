@@ -1,5 +1,13 @@
 #!/bin/bash
 
+which ffmpeg > /dev/null
+if [ $? != 0 ]
+then
+	echo "Please install ffmpeg before running this script."
+	echo "i.e. sudo apt-get install ffmpeg"
+	exit
+fi
+
 if [ "$1" == "" ]
 then
 	echo "Usage: $0 PATH"
