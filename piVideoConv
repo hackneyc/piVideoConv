@@ -16,9 +16,11 @@ fi
 
 tempFile=`mktemp -u XXXXXXXX.mp4`
 
-for fileName in `ls $1/*.mp4`
+OIFS="$IFS"
+IFS=$'\n'
+for fileName in `find $1 -name "*.mp4"`
 do
-	result=`ffprobe $fileName 2>&1 | grep yuv420p`
+	result=`ffprobe "$fileName" 2>&1 | grep yuv420p`
 
 	if [ $? == 0 ]
 	then
@@ -26,7 +28,9 @@ do
 	else
 		echo $fileName
 		echo ffmpeg -i $fileName -vf format=yuv420p $tempFile
-		ffmpeg -i $fileName -vf format=yuv420p $tempFile
-		mv -f $tempFile $fileName
+		ffmpeg -i "$fileName" -vf format=yuv420p $tempFile
+		mv -f $tempFile "$fileName"
 	fi
 done
+IFS="$OIFS"
+
